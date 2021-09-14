@@ -50,6 +50,9 @@ module emu
 	output        VGA_DE,    // = ~(VBlank | HBlank)
 	output        VGA_F1,
 	output [1:0]  VGA_SL,
+	output [2:0]  SHADOWMASK, //Type of HDMI shadowmask overlay
+	output        MASK_ROTATE,
+	output        MASK_2X,
 	output        VGA_SCALER, // Force VGA scaler
 
 	// Use framebuffer from DDRAM (USE_FB=1 in qsf)
@@ -131,7 +134,9 @@ assign USER_OUT  = '1;
 assign LED_USER  = ioctl_download;
 assign LED_DISK  = 0;
 assign LED_POWER = 0;
-
+assign SHADOWMASK = status[18:16];
+assign MASK_2X = status[19];
+assign MASK_ROTATE = status[20];
 wire [1:0] ar = status[15:14];
 
 assign VIDEO_ARX = (!ar) ? (landscape ? 8'd21 : status[2] ? 8'd5 : 8'd4) : (ar - 1'd1);
@@ -143,6 +148,9 @@ localparam CONF_STR = {
 	"H0OEF,Aspect ratio,Original,Full Screen,[ARC1],[ARC2];",
 	"H3H0O2,Orientation,Vert,Horz;",
 	"O35,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%,CRT 75%;",
+	"OGI,Shadow Mask,None,Shadow 1,Shadow 2,RGB Stripe,MG Stripe,Mono Stripe,RYCB Stripe;",
+	"OJ,Mask Double Size,No,Yes;",
+	"OK,Mask Rotate,No,Yes;",
 	"D4OD,Deinterlacer Hi-Res,Off,On;",
 	"-;",
 	"H2OA,Accelerator,Digital,Analog;",
